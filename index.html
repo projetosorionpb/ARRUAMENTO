@@ -1,107 +1,154 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Extrator de Arruamento — SIRGAS 2000 UTM 24S</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="css/style.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Extrator de Arruamento — SIRGAS 2000 UTM 24S</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
 
-<header>
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7ec8f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-  <h1>Extrator de Arruamento Georeferenciado</h1>
-  <span>SIRGAS 2000 / UTM Fuso 24S — EPSG:31984</span>
-  <span>OpenStreetMap</span>
-</header>
+  <header>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7ec8f7" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+    <h1>Extração de Arruamento</h1>
+    <span>SIRGAS 2000 / UTM Fuso 24S — EPSG:31984</span>
+    <span>OpenStreetMap</span>
+  </header>
 
-<div id="toolbar">
-  <div class="row">
-    <label>Localização:</label>
-    <input type="text" id="search-input" placeholder="Ex.: Rua das Flores, João Pessoa, PB" style="min-width:320px"/>
-    <button class="btn-blue" onclick="buscar()">🔍 Buscar</button>
-  </div>
-  <div id="sep"></div>
-  <div class="row">
-    <label>Raio:</label>
-    <select id="raio">
-      <option value="300">300 m</option>
-      <option value="500" selected>500 m</option>
-      <option value="1000">1 km</option>
-      <option value="2000">2 km</option>
-      <option value="5000">5 km</option>
-    </select>
-  </div>
-  <div class="row">
-    <label>Vias:</label>
-    <select id="tipo">
-      <option value="all">Todas</option>
-      <option value="paved">Pavimentadas</option>
-      <option value="primary">Primárias / Arteriais</option>
-      <option value="local">Locais / Residenciais</option>
-    </select>
-  </div>
-  <button class="btn-blue" onclick="extrair()" id="btn-extrair" disabled>📐 Extrair arruamento</button>
-  <div id="sep"></div>
-  <button class="btn-gray" onclick="limpar()" id="btn-limpar" disabled>🗑 Limpar</button>
-</div>
-
-<div id="main">
-  <div id="sidebar">
-    <div class="panel">
-      <h3>Sistema de Coordenadas</h3>
-      <div class="field"><label>Datum / Projeção</label><input type="text" value="SIRGAS 2000 — EPSG:31984" readonly style="background:#f5f5f5;color:#555"/></div>
-      <div class="field"><label>Fuso UTM</label><input type="text" value="24S (Meridiano Central: -39°)" readonly style="background:#f5f5f5;color:#555"/></div>
-      <div class="field"><label>Unidade</label><input type="text" value="Metro (m)" readonly style="background:#f5f5f5;color:#555"/></div>
+  <div id="toolbar">
+    <div class="row">
+      <label>Localização:</label>
+      <input type="text" id="search-input" placeholder="Ex.: Rua das Flores, João Pessoa, PB" style="min-width:320px" />
+      <button class="btn-blue" onclick="buscar()">🔍 Buscar</button>
     </div>
+    <div id="sep"></div>
+    <div class="row">
+      <label>Raio:</label>
+      <select id="raio">
+        <option value="300">300 m</option>
+        <option value="500" selected>500 m</option>
+        <option value="1000">1 km</option>
+        <option value="2000">2 km</option>
+        <option value="5000">5 km</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Vias:</label>
+      <select id="tipo">
+        <option value="all">Todas</option>
+        <option value="paved">Pavimentadas</option>
+        <option value="primary">Primárias / Arteriais</option>
+        <option value="local">Locais / Residenciais</option>
+      </select>
+    </div>
+    <button class="btn-blue" onclick="extrair()" id="btn-extrair" disabled>📐 Extrair arruamento</button>
+    <div id="sep"></div>
+    <button class="btn-gray" onclick="limpar()" id="btn-limpar" disabled>🗑 Limpar</button>
+  </div>
 
-    <div class="panel">
-      <h3>Resultado da Extração</h3>
-      <div class="stat-grid" id="stats">
-        <div class="stat"><div class="num" id="s-vias">—</div><div class="lbl">Vias</div></div>
-        <div class="stat"><div class="num" id="s-ext">—</div><div class="lbl">Extensão (km)</div></div>
-        <div class="stat"><div class="num" id="s-pts">—</div><div class="lbl">Vértices</div></div>
-        <div class="stat"><div class="num" id="s-tipos">—</div><div class="lbl">Tipos de via</div></div>
+  <div id="main">
+    <div id="sidebar">
+      <div class="panel">
+        <h3>Sistema de Coordenadas</h3>
+        <div class="field"><label>Datum / Projeção</label><input type="text" value="SIRGAS 2000 — EPSG:31984" readonly
+            class="readonly-input" /></div>
+        <div class="field"><label>Fuso UTM</label><input type="text" value="24S (Meridiano Central: -39°)" readonly
+            class="readonly-input" /></div>
+        <div class="field"><label>Unidade</label><input type="text" value="Metro (m)" readonly class="readonly-input" />
+        </div>
       </div>
+
+      <div class="panel">
+        <h3>Resultado da Extração</h3>
+        <div class="stat-grid" id="stats">
+          <div class="stat">
+            <div class="num" id="s-vias">—</div>
+            <div class="lbl">Vias</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="s-ext">—</div>
+            <div class="lbl">Extensão (km)</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="s-pts">—</div>
+            <div class="lbl">Vértices</div>
+          </div>
+          <div class="stat">
+            <div class="num" id="s-tipos">—</div>
+            <div class="lbl">Tipos de via</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="export-row" style="padding:10px 12px">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+          <h3
+            style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0;color:var(--text-color)">
+            Exportar</h3>
+          <select id="dxf-scale"
+            style="font-size:10px; padding:2px 4px; border-radius:4px; outline:none; cursor:pointer;" disabled>
+            <option value="1">Escala 1:1000</option>
+            <option value="2" selected>Escala 1:500 (2x)</option>
+          </select>
+        </div>
+        <button class="btn-green" onclick="exportGeoJSON()" id="btn-geojson" disabled>⬇ GeoJSON <span
+            class="badge">WGS84 + UTM</span></button>
+        <button class="btn-blue" onclick="exportDXF()" id="btn-dxf" disabled>⬇ DXF <span
+            class="badge">AutoCAD</span></button>
+        <button class="btn-orange" onclick="exportCSV()" id="btn-csv" disabled>⬇ CSV de Vias</button>
+      </div>
+
+      <div style="padding:6px 12px 4px;border-top:1px solid var(--border-color)">
+        <h3
+          style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;color:var(--text-color)">
+          Log</h3>
+      </div>
+      <div id="log"></div>
     </div>
 
-    <div class="export-row" style="padding:10px 12px">
-      <h3 style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666;margin-bottom:8px">Exportar</h3>
-      <button class="btn-green" onclick="exportGeoJSON()" id="btn-geojson" disabled>⬇ GeoJSON <span class="badge">WGS84 + UTM</span></button>
-      <button class="btn-orange" onclick="exportCSV()" id="btn-csv" disabled>⬇ CSV de Vias</button>
-    </div>
-
-    <div style="padding:6px 12px 4px;border-top:1px solid #eee">
-      <h3 style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666;margin-bottom:4px">Log</h3>
-    </div>
-    <div id="log"></div>
+    <div id="map"></div>
   </div>
 
-  <div id="map"></div>
-</div>
+  <div class="legend">
+    <strong style="font-size:11px;color:#444">Legenda:</strong>
+    <div class="lg-item">
+      <div class="lg-line" style="background:#c0392b;height:4px"></div><span>Arterial/Primária</span>
+    </div>
+    <div class="lg-item">
+      <div class="lg-line" style="background:#e67e22;height:3px"></div><span>Coletora/Secundária</span>
+    </div>
+    <div class="lg-item">
+      <div class="lg-line" style="background:#2980b9;height:2px"></div><span>Local/Residencial</span>
+    </div>
+    <div class="lg-item">
+      <div class="lg-line" style="background:#27ae60;height:2px"></div><span>Serviço</span>
+    </div>
+    <div class="lg-item">
+      <div class="lg-line" style="background:#888;height:1.5px"></div><span>Caminho/Passeio</span>
+    </div>
+  </div>
 
-<div class="legend">
-  <strong style="font-size:11px;color:#444">Legenda:</strong>
-  <div class="lg-item"><div class="lg-line" style="background:#c0392b;height:4px"></div><span>Arterial/Primária</span></div>
-  <div class="lg-item"><div class="lg-line" style="background:#e67e22;height:3px"></div><span>Coletora/Secundária</span></div>
-  <div class="lg-item"><div class="lg-line" style="background:#2980b9;height:2px"></div><span>Local/Residencial</span></div>
-  <div class="lg-item"><div class="lg-line" style="background:#27ae60;height:2px"></div><span>Serviço</span></div>
-  <div class="lg-item"><div class="lg-line" style="background:#888;height:1.5px"></div><span>Caminho/Passeio</span></div>
-</div>
+  <div id="statusbar">
+    <span id="sl">Clique no mapa ou busque um endereço para definir o centro da extração</span>
+    <span id="sr"></span>
+  </div>
 
-<div id="statusbar">
-  <span id="sl">Clique no mapa ou busque um endereço para definir o centro da extração</span>
-  <span id="sr"></span>
-</div>
+  <div id="overlay">
+    <div class="spinner"></div>
+    <p id="overlay-msg">Aguarde...</p>
+  </div>
 
-<div id="overlay">
-  <div class="spinner"></div>
-  <p id="overlay-msg">Aguarde...</p>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
-<script src="js/script.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+  <script src="js/script.js"></script>
 </body>
+
 </html>
