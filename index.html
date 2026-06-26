@@ -22,39 +22,46 @@
     <span>OpenStreetMap</span>
   </header>
 
-  <div id="toolbar">
-    <div class="row">
-      <label>Localização:</label>
-      <input type="text" id="search-input" placeholder="Ex.: Rua das Flores, João Pessoa, PB" style="min-width:320px" />
-      <button class="btn-blue" onclick="buscar()">🔍 Buscar</button>
-    </div>
-    <div id="sep"></div>
-    <div class="row">
-      <label>Raio:</label>
-      <select id="raio">
-        <option value="300">300 m</option>
-        <option value="500" selected>500 m</option>
-        <option value="1000">1 km</option>
-        <option value="2000">2 km</option>
-        <option value="5000">5 km</option>
-      </select>
-    </div>
-    <div class="row">
-      <label>Vias:</label>
-      <select id="tipo">
-        <option value="all">Todas</option>
-        <option value="paved">Pavimentadas</option>
-        <option value="primary">Primárias / Arteriais</option>
-        <option value="local">Locais / Residenciais</option>
-      </select>
-    </div>
-    <button class="btn-blue" onclick="extrair()" id="btn-extrair" disabled>📐 Extrair arruamento</button>
-    <div id="sep"></div>
-    <button class="btn-gray" onclick="limpar()" id="btn-limpar" disabled>🗑 Limpar</button>
-  </div>
-
   <div id="main">
     <div id="sidebar">
+      <div class="panel step-panel">
+        <h3 class="step-title"><span class="step-num">1</span> Localização</h3>
+        <p class="step-desc">Busque um endereço ou clique no mapa para definir o ponto central.</p>
+        <div class="field" style="margin-top:8px">
+          <input type="text" id="search-input" placeholder="Ex.: Rua das Flores, João Pessoa" style="margin-bottom:6px" />
+          <button class="btn-blue" onclick="buscar()" style="width:100%; justify-content:center">🔍 Buscar no Mapa</button>
+        </div>
+      </div>
+
+      <div class="panel step-panel">
+        <h3 class="step-title"><span class="step-num">2</span> Parâmetros</h3>
+        <p class="step-desc">Defina a área de abrangência e quais vias deseja extrair.</p>
+        <div class="field" style="margin-top:8px">
+          <label>Raio de busca ao redor do centro:</label>
+          <select id="raio">
+            <option value="300">300 metros</option>
+            <option value="500" selected>500 metros</option>
+            <option value="1000">1 quilômetro</option>
+            <option value="2000">2 quilômetros</option>
+            <option value="5000">5 quilômetros</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Quais vias extrair:</label>
+          <select id="tipo">
+            <option value="all">Todas as Vias</option>
+            <option value="paved">Apenas Pavimentadas</option>
+            <option value="primary">Apenas Primárias / Arteriais</option>
+            <option value="local">Apenas Locais / Residenciais</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="panel step-panel" style="background:var(--bg-dark);">
+        <h3 class="step-title" style="margin-bottom:8px;"><span class="step-num">3</span> Ação</h3>
+        <button class="btn-orange" onclick="extrair()" id="btn-extrair" disabled style="width:100%; height:40px; font-size:14px; margin-bottom:8px;">📐 Extrair Arruamento</button>
+        <button class="btn-gray" onclick="limpar()" id="btn-limpar" disabled style="width:100%; justify-content:center;">🗑 Limpar Dados</button>
+      </div>
       <div class="panel">
         <h3>Sistema de Coordenadas</h3>
         <div class="field"><label>Datum / Projeção</label><input type="text" value="SIRGAS 2000 — EPSG:31984" readonly
@@ -87,28 +94,26 @@
         </div>
       </div>
 
-      <div class="export-row" style="padding:10px 12px">
+      <div class="panel export-row">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
-          <h3
-            style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin:0;color:var(--text-color)">
-            Exportar</h3>
+          <h3 class="step-title" style="margin:0;"><span class="step-num">4</span> Exportar DXF</h3>
           <select id="dxf-scale"
-            style="font-size:10px; padding:2px 4px; border-radius:4px; outline:none; cursor:pointer;" disabled>
+            style="font-size:10px; padding:2px 4px; border-radius:4px; outline:none; cursor:pointer; width:auto; height:24px;" disabled>
             <option value="1">Escala 1:1000</option>
             <option value="2" selected>Escala 1:500 (2x)</option>
           </select>
         </div>
-        <button class="btn-green" onclick="exportGeoJSON()" id="btn-geojson" disabled>⬇ GeoJSON <span
-            class="badge">WGS84 + UTM</span></button>
-        <button class="btn-blue" onclick="exportDXF()" id="btn-dxf" disabled>⬇ DXF <span
-            class="badge">AutoCAD</span></button>
-        <button class="btn-orange" onclick="exportCSV()" id="btn-csv" disabled>⬇ CSV de Vias</button>
+        <p class="step-desc" style="margin-bottom:10px">Selecione a escala e baixe o arquivo para AutoCAD/nanoCAD.</p>
+        <button class="btn-blue" onclick="exportDXF()" id="btn-dxf" style="height:36px; font-size:13px;" disabled>⬇ Baixar Arquivo .DXF</button>
+        
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="btn-gray" onclick="exportGeoJSON()" id="btn-geojson" disabled style="flex:1; font-size:11px;">GeoJSON</button>
+          <button class="btn-gray" onclick="exportCSV()" id="btn-csv" disabled style="flex:1; font-size:11px;">CSV</button>
+        </div>
       </div>
 
-      <div style="padding:6px 12px 4px;border-top:1px solid var(--border-color)">
-        <h3
-          style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;color:var(--text-color)">
-          Log</h3>
+      <div class="panel" style="padding:10px 16px; border-bottom:none;">
+        <h3 style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:4px;">Log de Execução</h3>
       </div>
       <div id="log"></div>
     </div>
@@ -136,7 +141,7 @@
   </div>
 
   <div id="statusbar">
-    <span id="sl">Clique no mapa ou busque um endereço para definir o centro da extração</span>
+    <span id="sl">Siga os passos no painel lateral esquerdo para extrair os dados.</span>
     <span id="sr"></span>
   </div>
 

@@ -53,14 +53,7 @@ header span {
 }
 
 #toolbar {
-  background: var(--bg-panel);
-  border-bottom: 1px solid var(--border-color);
-  padding: 10px 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  flex-shrink: 0;
+  display: none; /* Removed in favor of sidebar steps */
 }
 
 .row {
@@ -174,18 +167,56 @@ button:disabled {
 }
 
 #sidebar {
-  width: 280px;
+  width: 320px;
   flex-shrink: 0;
   background: var(--bg-panel);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 #map {
   flex: 1;
   z-index: 1;
+}
+
+.step-panel {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.step-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--text-main) !important;
+  margin-bottom: 6px !important;
+}
+
+.step-num {
+  background: var(--accent-orange);
+  color: #121418;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.step-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  line-height: 1.4;
 }
 
 .panel {
